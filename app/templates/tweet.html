@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h4 class="mb-3">Total Count <span class="text-warning">{{ length }}</span></h4>
+<h5 class="mb-3">Search Keyword「{{keyword}}」</h5>
+
+<h4 class="mb-3">Time flow</h4>
+<div class="card p-3 mb-3">
+    <canvas id="tweet_chart" height="400"></canvas>
+</div>
+
+<h4 class="mb-3">Search Result</h4>
+<span>{{ graph_data.index.values}}</span>
+{% for index, row in tweet_data.iterrows %}
+<div class="card mb-2">
+    <div class="card-body">
+        <div class="d-flex align-items-center mb-2">
+            {% if row.Img %}
+                <img src="{{row.Img}}" alt="" class="rounded-circle mr-3">
+            {% endif %}
+            <span><b>{{row.Name}}</b></span>
+
+        </div>
+        <p>{{ row.Text|linebreaksbr }}</p>
+        <div class="d-flex align-items-center mb-2">
+            <div class="mr-3">
+                <i class="fas fa-retweet"></i>
+
+                <span>{{ row.Retweet }}</span>
+            </div>
+            <div class="mr-3">
+                <i class="fas fa-heart"></i>
+                <span>{{ row.Like }}</span>
+            </div>
+        </div>
+        <div>{{ row.Created_At }}</div>
+        <a href="{{ row.URL }}">本文</a>
+    </div>
+
+</div>
+
+{% endfor%}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const Data = JSON.parse('{{ graph_data|safe }}');
+    const labels = Object.keys(Data)
+
+    let Like = []
+    let Retweet = []
+    let Count = []
+
+    for( var item of labels){
+        Like.push(Data[item]['Like'])
+        Retweet.push(Data[item]['Retweet'])
+        Count.push(Data[item]['Count'])
+    }
+
+    const tweet_ctx = document.getElementById("tweet_chart");
+    const tweet = new Chart(tweet_ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'いいね数',
+                    type: "line",
+                    data: Like,
+                    borderColor: "rgba(207,46,146,0.5)",
+                    backgroundColor: "rgba(0,0,0,0)",
+                    yAxisID: "graph1",
+                },
+                {
+                    label: 'リツイート数',
+                    type: "line",
+                    data: Retweet,
+                    borderColor: "rgba(0,138,190,0.5)",
+                    backgroundColor: "rgba(0,0,0,0)",
+                    yAxisID: "graph1",
+                },
+                {
+                    label: '投稿数',
+                    data: Count,
+                    borderColor: "rgba(207,105,57)",
+                    backgroundColor: "rgba(207,105,57,0.5)",
+                    yAxisID: "graph2",
+                },
+            ],
+        },
+        options: {
+            elements: {
+                line: {
+                    tension: 0,
+                }
+            },
+            tooltips: {
+                mode: 'nearest',
+                intersect: false,
+            },
+            responsive: true,
+            scales: {
+                yAxes: [
+                    {
+                        id: "graph1",
+                        type: "linear",
+                        position: "left",
+                    },
+                    {
+                        id: "graph2",
+                        type: "linear",
+                        position: "right",
+                        ticks: {
+                            min: 0,
+                            stepSize: 5
+                        },
+                        gridLines: {
+                            drawOnChartArea: false,
+                        },
+                    }
+                ],
+            },
+        }
+    });
+
+
+</script>
+
+{% endblock %}

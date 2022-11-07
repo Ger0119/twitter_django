@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="my-4">
+    <h2>Keyword Search</h2>
+</div>
+<div class="table-responsive search-table">
+    <table class="table">
+        <form method="POST">
+            {% csrf_token %}
+            <tr>
+                <th scope="row">
+                    <label class="control-label">KEYWORD</label>
+                </th>
+                <td>
+                    {% render_field form.keyword class="form-control" placeholder="Input Keyword" %}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    <label class="control-label">COUNT</label>
+                </th>
+                <td>
+                    {% render_field form.items_count class="form-control" placeholder="Count" %}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    <label class="control-label">LIKE</label>
+                </th>
+                <td>
+                    {% render_field form.like_count class="form-control" placeholder="Like" %}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    <label class="control-label">SEARCH START</label>
+                </th>
+                <td>
+                    {% render_field form.search_start class="form-control" placeholder="Search Start" %}
+                </td>
+            </tr>
+                        <tr>
+                <th scope="row">
+                    <label class="control-label">SEARCH END</label>
+                </th>
+                <td>
+                    {% render_field form.search_end class="form-control" placeholder="Search End" %}
+                </td>
+            </tr>
+            <tr>
+                <td class="text-center" colspan="2">
+                    <button class="btn btn-warning" type="submit">Submit</button>
+                </td>
+            </tr>
+        </form>
+    </table>
+</div>
+{% endblock %}
